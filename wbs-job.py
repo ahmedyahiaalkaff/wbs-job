@@ -5,34 +5,37 @@ import datetime
 import sys
 from openpyxl import Workbook, load_workbook
 
+def print_sep_comma(*args):
+  print(*args, sep=",")
+
 def process_xlsx(file, lud):
   try:
     wb = load_workbook(file, read_only=True)
   except:
-    print("file open exception: ", file.name)
+    print_sep_comma(file.name, "file open exception")
     return False
   for sheet in wb:
     try:
       d = dateutil.parser.parse(sheet.title)
       if(d > lud):
-        print("Needs update: ", file.name, sheet.title, d)
+        print_sep_comma(file.name, "Needs update")
     except dateutil.parser.ParserError:
-      print("Error parsing date", file.name, sheet.title)
+      print_sep_comma(file.name, "Error parsing date")
   return True
 
 def process_xls(file, lud):
   try:
     wb = xlrd.open_workbook(file)
   except:
-    print("file open exception: ", file.name)
+    print_sep_comma(file.name, "file open exception")
     return False
   for sheet in wb.sheet_names():
     try:
       d = dateutil.parser.parse(sheet)
       if(d > lud):
-        print("Needs update: ", file.name, sheet, d)
+        print_sep_comma(file.name, "Needs update")
     except dateutil.parser.ParserError:
-      print("Error parsing date", file.name, sheet)
+      print_sep_comma(file.name, "Error parsing date")
   return True
 
 def main():
@@ -51,6 +54,7 @@ def main():
   lud = dateutil.parser.parse(lus)
 
   files = list(p.glob('*.xls*'))
+  print_sep_comma("file_name", "comment")
   for file in files:
     if file.name.endswith("xls"):
       if not process_xls(file, lud):
