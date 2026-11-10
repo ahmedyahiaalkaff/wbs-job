@@ -1,4 +1,4 @@
-from openpyxl import Workbook, load_workbook
+import xlrd
 from pathlib import Path
 import dateutil
 import datetime
@@ -21,14 +21,14 @@ def main():
 
   files = list(p.glob('*.xls*'))
   for file in files:
-    wb = load_workbook(file, read_only=True)
-    for sheet in wb:
+    wb = xlrd.open_workbook(file)
+    for sheet in wb.sheet_names():
       try:
-        d = dateutil.parser.parse(sheet.title)
+        d = dateutil.parser.parse(sheet)
         if(d > lud):
-          print("Needs update: ", file, sheet.title, d)
+          print("Needs update: ", file, sheet, d)
       except dateutil.parser.ParserError:
-        print("Error parsing date", file, sheet.title)
+        print("Error parsing date", file, sheet)
 
 if __name__ == '__main__':
   main()
