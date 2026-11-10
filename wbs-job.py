@@ -27,6 +27,7 @@ def main():
         wb = xlrd.open_workbook(file)
       except:
         print("file open exception: ", file.name)
+        continue
       for sheet in wb.sheet_names():
         try:
           d = dateutil.parser.parse(sheet)
@@ -39,6 +40,7 @@ def main():
         wb = load_workbook(file, read_only=True)
       except:
         print("file open exception: ", file.name)
+        continue
       for sheet in wb:
         try:
           d = dateutil.parser.parse(sheet.title)
