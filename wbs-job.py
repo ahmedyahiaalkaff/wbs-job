@@ -23,22 +23,28 @@ def main():
   files = list(p.glob('*.xls*'))
   for file in files:
     if file.name.endswith("xls"):
-      wb = xlrd.open_workbook(file)
+      try:
+        wb = xlrd.open_workbook(file)
+      except:
+        print("file open exception: ", file.name)
       for sheet in wb.sheet_names():
         try:
           d = dateutil.parser.parse(sheet)
           if(d > lud):
-            print("Needs update: ", file, sheet, d)
+            print("Needs update: ", file.name, sheet, d)
         except dateutil.parser.ParserError:
-          print("Error parsing date", file, sheet)
+          print("Error parsing date", file.name, sheet)
     else:
-      wb = load_workbook(file, read_only=True)
+      try:
+        wb = load_workbook(file, read_only=True)
+      except:
+        print("file open exception: ", file.name)
       for sheet in wb:
         try:
           d = dateutil.parser.parse(sheet.title)
           if(d > lud):
-            print("Needs update: ", file, sheet.title, d)
+            print("Needs update: ", file.name, sheet.title, d)
         except dateutil.parser.ParserError:
-          print("Error parsing date", file, sheet.title)
+          print("Error parsing date", file.name, sheet.title)
 if __name__ == '__main__':
   main()
