@@ -3,6 +3,7 @@ from pathlib import Path
 import dateutil
 import datetime
 import sys
+from openpyxl import Workbook, load_workbook
 
 def main():
   argv = sys.argv
@@ -21,14 +22,23 @@ def main():
 
   files = list(p.glob('*.xls*'))
   for file in files:
-    wb = xlrd.open_workbook(file)
-    for sheet in wb.sheet_names():
-      try:
-        d = dateutil.parser.parse(sheet)
-        if(d > lud):
-          print("Needs update: ", file, sheet, d)
-      except dateutil.parser.ParserError:
-        print("Error parsing date", file, sheet)
-
+    if file.name.endswith("xls"):
+      wb = xlrd.open_workbook(file)
+      for sheet in wb.sheet_names():
+        try:
+          d = dateutil.parser.parse(sheet)
+          if(d > lud):
+            print("Needs update: ", file, sheet, d)
+        except dateutil.parser.ParserError:
+          print("Error parsing date", file, sheet)
+    else:
+      wb = load_workbook(file, read_only=True)
+      for sheet in wb:
+        try:
+          d = dateutil.parser.parse(sheet.title)
+          if(d > lud):
+            print("Needs update: ", file, sheet.title, d)
+        except dateutil.parser.ParserError:
+          print("Error parsing date", file, sheet.title)
 if __name__ == '__main__':
   main()
